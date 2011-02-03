@@ -1,0 +1,15 @@
+a.playButton {
+	z-index: 9999999;
+	display: block;
+	width: 140px;
+	height: 120px;
+	border: none;
+	background: transparent url('playbutton.png') no-repeat top left;
+	text-indent: -999em;
+	overflow: hidden;
+	text-align: left;
+	cursor: pointer;
+}
+	a.playButton:hover {
+		background-position: 0 -120px;
+	}
