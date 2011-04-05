@@ -33,7 +33,7 @@ tinyMCE.init(
 							+ '-blockquote[cite],'
 							+ '-ol[reversed|start|type],'
 							+ '-ul,'
-							+ '-li[value],'
+							+ '-li[value|data-*],'
 							+ '-dl,'
 							+ '-dt,'
 							+ '-dd,'
