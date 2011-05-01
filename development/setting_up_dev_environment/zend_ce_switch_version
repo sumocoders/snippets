@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+# This script will switch between the Zend Server CE-versions
+#
+# @version	1.0.0
+# @author	Tijs Verkoyen <tijs@sumocoders.be>
+
+# if there are no arguments we should show the usage
+if [ $# -lt 1 ]; then
+	# output usage
+	echo Usage: zend_ce_switch_version [version]
+	echo Possible versions are: 5.2, 5.3
+	
+	# exit
+	exit 1
+fi
+
+# check if we are root
+if [ "$(id -u)" != "0" ]; then
+	# show warning
+	echo "Make sure you have root-privileges"
+	
+	# exit
+	exit 1
+fi
+
+# check if the version exists
+if [ ! -d /usr/local/zend-$1 ]; then
+	# show warning
+	echo "This version($1) does not exists"
+
+	# exit
+	exit 1
+fi
+
+# stop the server
+if [ -f /usr/local/zend/bin/zendctl.sh ]; then
+	/usr/local/zend/bin/zendctl.sh stop
+fi
+
+# remove the symlink
+if [ -h /usr/local/zend ]; then
+	rm /usr/local/zend
+fi
+
+# symlink requested version
+ln -s /usr/local/zend-$1 /usr/local/zend
+
+# start the server
+/usr/local/zend/bin/zendctl.sh start
