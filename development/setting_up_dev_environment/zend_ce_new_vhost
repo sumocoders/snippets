@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# This script will create a new vhost
+#
+# @version	1.0.0
+# @author	Tijs Verkoyen <tijs@sumocoders.be>
+#
+# @todo	improve the script so it can handle tabs in /etc/hosts, .../*-vhost.conf
+# @todo	improve the script so it only adds a \n in /etc/hosts if needed
+
+# if there are no arguments we should show the usage
+if [ $# -lt 1 ]; then
+	# output usage
+	echo Usage: zend_ce_new_vhost [vhost] [document_root]
+	
+	# exit
+	exit 1
+fi
+
+# check if we are root
+if [ "$(id -u)" != "0" ]; then
+	# show warning
+	echo "Make sure you have root-privileges"
+	
+	# exit
+	exit 1
+fi
+
+if [ -z $2 ]; then
+	DOCUMENT_ROOT=`cd ./; pwd`
+else
+	DOCUMENT_ROOT=`cd $2; pwd`
+fi
+
+# check if the document_root exists
+if [ ! -d $DOCUMENT_ROOT ]; then
+	# show warning
+	echo "The document_root ($DOCUMENT_ROOT) does not exists"
+
+	# exit
+	exit 1
+fi
+
+# check if servername already exists in /etc/hosts
+if grep "^127.0.0.1 $1$" /etc/hosts > /dev/null; then
+	# warn the user
+	echo "The host ($1) already exists, continue? (Y/N)";
+	
+	# read the answer
+	read ANSWER
+	
+	# answer is not Y
+	if [ $ANSWER != Y ]; then
+		# and not y
+		if [ $ANSWER != y ]; then
+			# exit
+			exit 1
+		fi
+	fi
+else
+	# append
+	echo -e "\n127.0.0.1 $1" >> /etc/hosts
+fi
+
+# check if vhost is alread configured
+if grep "^ ServerName $1$" ~/Zend/server/apache/conf/httpd-vhosts.conf > /dev/null; then
+	# warn the user
+	echo "The vhost ($1) already exists"
+	
+	# exit
+	exit 1
+else
+	NOW=$(date +"%Y-%m-%d %H:%M:%S");
+
+	# create vhost
+	VHOST="
+# vhost for $1 (created on: $NOW)
+<VirtualHost *:80>
+ DocumentRoot \"$DOCUMENT_ROOT\"
+ ServerName $1
+ ErrorLog \"logs/$1.error.log\"
+ CustomLog \"logs/$1.access.log\" common
+ <directory \"$DOCUMENT_ROOT\">
+  Options Indexes FollowSymLinks
+  AllowOverride all
+  Order Deny,Allow
+  Deny from all
+  Allow from 127.0.0.1
+ </directory>
+</VirtualHost>"
+
+	# append to the vhosts
+	echo -e "$VHOST" >> ~/Zend/server/apache/conf/httpd-vhosts.conf
+fi
+
+# reload apache
+/usr/local/zend/bin/apachectl graceful
