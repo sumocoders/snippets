@@ -115,7 +115,7 @@ If you want to switch between version, follow the steps below:
 * Switch to the version you need: `sudo ln -s /usr/local/zend-5.x /usr/local/zend` (replace x with the correct version).
 * Start the server: `sudo /usr/local/zend/bin/zendctl.sh start`.
 
-Or use the script [`zend_ce_switch_version`](http://github.com/sumocoders/snippets/...): `sudo zend_ce_switch_version <version>`.
+Or use the script [`zend_ce_switch_version`](https://github.com/sumocoders/snippets/blob/master/development/setting_up_dev_environment/zend_ce_switch_version): `sudo zend_ce_switch_version <version>`.
 
 Install the script:
 
