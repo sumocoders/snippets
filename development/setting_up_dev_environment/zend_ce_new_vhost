@@ -83,9 +83,9 @@ else
  <directory \"$DOCUMENT_ROOT\">
   Options Indexes FollowSymLinks
   AllowOverride all
-  Order Deny,Allow
-  Deny from all
-  Allow from 127.0.0.1
+  Order Allow,Deny
+  Deny from None
+  Allow from all
  </directory>
 </VirtualHost>"
 
