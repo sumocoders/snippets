@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # This script will create a new vhost
 #
@@ -9,7 +9,7 @@
 # if there are no arguments we should show the usage
 if [ $# -lt 1 ]; then
 	# output usage
-	echo Usage: zend_server_new_vhost [vhost] [document_root]
+	echo Usage: zend_ce_new_vhost [vhost] [document_root]
 
 	# exit
 	exit 1
