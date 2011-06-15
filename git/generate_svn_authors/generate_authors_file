@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# This script will generate an authors template from the SVN log
+# Ripped from http://technicalpickles.com/posts/creating-a-svn-authorsfile-when-migrating-from-subversion-to-git/
+#
+# @version	1.0.0
+# @author	Tijs Verkoyen <tijs@sumocoders.be>
+authors=$(svn log -q $1 | grep -e '^r' | awk 'BEGIN { FS = "|" } ; { print $2 }' | sort | uniq)
+for author in ${authors}; do
+  echo "${author} = NAME <USER@DOMAIN>";
+done
