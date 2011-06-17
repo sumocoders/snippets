@@ -17,7 +17,7 @@ tinyMCE.init(
 	// processing
 	relative_urls: false,
 	entity_encoding: 'raw',
-	
+
 	// added HTML5 element (inspired on http://www.w3.org/TR/html5)
 	extended_valid_elements: '@[accesskey|class|contextmenu|dir|draggable|hidden|id|lang|spellcheck|style|tabindex|title|onabort|onblur|oncanplay|oncanplaythrough|onchange|onclick|oncontextmenu|ondblclick|ondrag|ondragend|ondragenter|ondragleave|ondragover|ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|onformchange|onforminput|oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|onloadedmetadata|onloadstart|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onpause|onplay|onplaying|onprogress|onratechange|onreadystatechange|onreset|onscroll|onseeked|onseeking|onselect|onshow|onstalled|onsubmit|onsuspend|ontimeupdate|onvolumechange|onwaiting|data-*|rel]'
 							+ 'section,'
@@ -62,7 +62,7 @@ tinyMCE.init(
 							+ '-tr,'
 							+ '#td[colspan|rowspan|headers],'
 							+ '#th[colspan|rowspan|headers|scope],'
-							+ 'form[accept-charset|action|autocomplete||enctype|method<get|post|name|novalidate|target<_self?_parent?_top?_blank],'
+							+ 'form[accept-charset|action|autocomplete|enctype|method<get|post|name|novalidate|target<_self?_parent?_top?_blank],'
 							+ 'fieldset[disabled|form|name],'
 							+ 'label[form|for],'
 							+ 'input[accept|alt|autocomplete|autofocus|checked|disabled|form|formaction|formenctype|formmethod|formnovalidate|formtarget|height|list|max|maxlength|min|multiple|name|pattern|placeholder|readonly|required|size|src|step|type<hidden?text?search?tel?url?email?password?datetime?date?month?week?time?datetime-local?number?range?color?checkbox?radio?file?submit?image?reset?button|value|width],'
@@ -78,20 +78,20 @@ tinyMCE.init(
 							+ 'summary,'
 							+ 'command[type|label|icon|disabled|checked|radiogroup],'
 							+ 'menu[type|label]',
-		
+
 	// because Tiny don't know HTML5, we add the new elements into the custom element, so they will be converted into div/span inside the editor
 	custom_elements: 'section,nav,article,aside,hgroup,header,footer'
 					+ 'figure,~figcaption'
 					+ '~s,~time,~mark,~ruby,~rt,~rp,~wbr,'
 					+ 'video,audio,canvas,'
 					+ 'datalist,keygen,output,~progress,~meter,details,summary,command,menu',
-	
+
 	// some elements aren't available in HTML 5, so disabled them
 	invalid_elements: 'font,acronym,tt,big',
 
 	// HTML5 is more like HTML4 then XHTML so format as html
 	element_format: 'html',
-	
+
 	// the validator doesn't know HTML5 so don't verify
 	verify_html: false,
 
@@ -104,7 +104,7 @@ tinyMCE.init(
 
 	// layout options
 	body_class: 'content',
-	content_css: '/frontend/core/layout/css/screen.css{option:THEME_HAS_CSS},/frontend/themes/{$THEME}/core/layout/css/screen.css{/option:THEME_HAS_CSS},/backend/core/layout/css/editor_content.css{option:THEME_HAS_EDITOR_CSS},/frontend/themes/{$THEME}/core/css/layout/editor_content.css{/option:THEME_HAS_EDITOR_CSS}',
+	content_css: '/frontend/core/layout/css/screen.css{option:THEME_HAS_CSS},/frontend/themes/{$THEME}/core/layout/css/screen.css{/option:THEME_HAS_CSS},/backend/core/layout/css/editor_content.css{option:THEME_HAS_EDITOR_CSS},/frontend/themes/{$THEME}/core/layout/css/editor_content.css{/option:THEME_HAS_EDITOR_CSS}',
 
 	// theme options
 	theme_advanced_buttons1: 'bold,italic,strikethrough,|,undo,redo,|,bullist,numlist,blockquote,|,outdent,indent,|,link,unlink,anchor,|,charmap,code,|,fullscreen,|,template',
@@ -123,7 +123,7 @@ tinyMCE.init(
 	// image manager
 	imagemanager_handle: 'image',
 	imagemanager_contextmenu: false,
-	
+
 	// templates
 	template_templates:
 	[
@@ -152,9 +152,9 @@ tinyMCE.init(
 	paste_strip_class_attributes: 'mso',
 	paste_remove_spans: true,
 	paste_remove_styles: true,
-	
+
 	media_strict: false,
-	
+
 	onchange_callback: jsBackend.tinyMCE.checkContent,
 	setup: function(editor)
 	{
