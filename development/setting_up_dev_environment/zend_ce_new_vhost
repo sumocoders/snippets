@@ -2,30 +2,33 @@
 #
 # This script will create a new vhost
 #
-# @version	1.0.0
+# @version	1.0.1
 # @author	Tijs Verkoyen <tijs@sumocoders.be>
-#
-# @todo	improve the script so it can handle tabs in /etc/hosts, .../*-vhost.conf
-# @todo	improve the script so it only adds a \n in /etc/hosts if needed
+# @author	Matthias Mullie <matthias@novevirtu.com>
+
+# @todo: there is no check to see if the httpd.conf we look is actually the one being loaded by apache
+# @todo: there is no check to see if the httpd-vhosts.conf we edit is actually the one being loaded by apache
+# @todo: the check for vhosts.d/*.conf is also a little bit flaky; it might be called from another source; or it might not be loaded by the httpd.conf being loaded by apache
 
 # if there are no arguments we should show the usage
 if [ $# -lt 1 ]; then
 	# output usage
 	echo Usage: zend_ce_new_vhost [vhost] [document_root]
-	
+
 	# exit
 	exit 1
 fi
 
-# check if we are root
+# check if we are root user
 if [ "$(id -u)" != "0" ]; then
 	# show warning
 	echo "Make sure you have root-privileges"
-	
+
 	# exit
 	exit 1
 fi
 
+# set document root (if not set, use pwd)
 if [ -z $2 ]; then
 	DOCUMENT_ROOT=`cd ./; pwd`
 else
@@ -42,56 +45,92 @@ if [ ! -d $DOCUMENT_ROOT ]; then
 fi
 
 # check if servername already exists in /etc/hosts
-if grep "^127.0.0.1 $1$" /etc/hosts > /dev/null; then
+if grep "^127.0.0.1[[:space:]]*$1$" /etc/hosts > /dev/null; then
 	# warn the user
-	echo "The host ($1) already exists, continue? (Y/N)";
-	
+	echo "The host ($1) already exists, continue? (Y/N)"
+
 	# read the answer
 	read ANSWER
-	
-	# answer is not Y
-	if [ $ANSWER != Y ]; then
-		# and not y
-		if [ $ANSWER != y ]; then
+
+	# answer is not Y/y
+        case $ANSWER in
+		'y'|'Y')
+			# keep going
+			break
+			;;
+		*)
 			# exit
 			exit 1
-		fi
-	fi
+			;;
+	esac
 else
 	# append
-	echo -e "\n127.0.0.1 $1" >> /etc/hosts
+	echo -e "127.0.0.1\t$1" >> /etc/hosts
 fi
 
-# check if vhost is alread configured
-if grep "^ ServerName $1$" ~/Zend/server/apache/conf/httpd-vhosts.conf > /dev/null; then
-	# warn the user
-	echo "The vhost ($1) already exists"
-	
-	# exit
-	exit 1
-else
-	NOW=$(date +"%Y-%m-%d %H:%M:%S");
+# current date/time
+NOW=$(date +"%Y-%m-%d %H:%M:%S")
 
-	# create vhost
-	VHOST="
+# log path
+LOGPATH=`find /usr -name error.log 2>/dev/null`
+LOGPATH=${LOGPATH%%[[:space:]]*}
+LOGPATH=${LOGPATH/error.log/}
+
+# create vhost
+VHOST="
 # vhost for $1 (created on: $NOW)
 <VirtualHost *:80>
- DocumentRoot \"$DOCUMENT_ROOT\"
- ServerName $1
- ErrorLog \"logs/$1.error.log\"
- CustomLog \"logs/$1.access.log\" common
- <directory \"$DOCUMENT_ROOT\">
-  Options Indexes FollowSymLinks
-  AllowOverride all
-  Order Allow,Deny
-  Deny from None
-  Allow from all
- </directory>
+	DocumentRoot \"$DOCUMENT_ROOT\"
+	ServerName $1
+	ErrorLog \"$LOGPATH$1.error.log\"
+	CustomLog \"$LOGPATH$1.access.log\" common
+	<Directory \"$DOCUMENT_ROOT\">
+		Options Indexes FollowSymLinks
+		AllowOverride all
+		Order Allow,Deny
+		Deny from None
+		Allow from all
+	</Directory>
 </VirtualHost>"
 
-	# append to the vhosts
-	echo -e "$VHOST" >> ~/Zend/server/apache/conf/httpd-vhosts.conf
+# find apache config
+HTTPDPATH=`find /etc /usr -name httpd.conf 2>/dev/null`
+HTTPDPATH=${HTTPDPATH%%[[:space:]]*}
+
+# find vhost includes folder; check if vhost files are actually included
+VHOSTSINCLUDEPATH=`find /etc /usr -name vhosts.d 2>/dev/null`
+VHOSTSINCLUDEPATH=${VHOSTSINCLUDEPATH%%[[:space:]]*}
+if grep "$VHOSTSINCLUDEPATH/\*.conf" $HTTPDPATH > /dev/null; then
+	# check if vhost already exists
+	if [ -f $VHOSTSINCLUDEPATH/$1.conf ]; then
+		# warn the user
+		echo "The vhost ($1) already exists"
+
+		# exit
+		exit 1
+	else
+		# create new vhost file
+		echo -e "$VHOST" > $VHOSTSINCLUDEPATH/$1.conf
+	fi
+else
+	# find general vhosts file
+	VHOSTSPATH=`find /etc /usr -name httpd-vhosts.conf 2>/dev/null`
+	VHOSTSPATH=${VHOSTSPATH%%[[:space:]]*}
+
+	# check if vhost is already configured
+	if grep "^ ServerName $1$" $VHOSTSPATH > /dev/null; then
+		# warn the user
+		echo "The vhost ($1) already exists"
+
+		# exit
+		exit 1
+	else
+		# append to the vhosts
+		echo -e "$VHOST" >> $VHOSTSPATH
+	fi
 fi
 
 # reload apache
-/usr/local/zend/bin/apachectl graceful
+APACHEPATH=`find /usr -name apachectl 2>/dev/null`;
+APACHEPATH=${APACHEPATH%%[[:space:]]*}
+$APACHEPATH graceful
