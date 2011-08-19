@@ -63,7 +63,7 @@ else
 fi
 
 # check if vhost is alread configured
-if grep "^ ServerName $1$" ~/Zend/server/apache/conf/httpd-vhosts.conf > /dev/null; then
+if grep "^ ServerName $1$" /usr/local/zend/apache2/conf/extra/httpd-vhosts.conf > /dev/null; then
 	# warn the user
 	echo "The vhost ($1) already exists"
 	
@@ -90,7 +90,7 @@ else
 </VirtualHost>"
 
 	# append to the vhosts
-	echo -e "$VHOST" >> ~/Zend/server/apache/conf/httpd-vhosts.conf
+	echo -e "$VHOST" >> /usr/local/zend/apache2/conf/extra/httpd-vhosts.conf
 fi
 
 # reload apache
