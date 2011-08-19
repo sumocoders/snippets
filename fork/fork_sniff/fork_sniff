@@ -1,0 +1,1 @@
+phpcs -v --standard="/Users/<user>/Sites/forkng/forkng.local/tools/codesniffer/Fork" --extensions=php --report=full ./
