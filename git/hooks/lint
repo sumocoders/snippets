@@ -5,6 +5,7 @@
 $output = array();
 $return = 0;
 $exitStatus = 0;
+$lintErrors = array();
 
 // any commits?
 exec('git rev-parse --verify HEAD 2> /dev/null', $output, $return);
@@ -29,10 +30,17 @@ foreach($output as $file)
 	if($return == 0) continue;
 	
 	// join errors
-	echo implode("\n", $lintOutput), "\n";
+	$lintErrors = array_merge($lintErrors, $lintOutput);
 	
 	// set status
 	$exitStatus = 1;
+}
+
+// errors?
+if($exitStatus == 1)
+{
+	echo 'PHP Lint errors:';
+	echo implode("\n", $lintErrors);
 }
 
 exit($exitStatus);
