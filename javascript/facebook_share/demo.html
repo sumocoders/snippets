@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="nl">
+<head>
+	<meta charset="utf-8">
+	<title>Demo share</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="share.js"></script>
+</head>
+
+<body>
+	<div id="container">
+		<div id="facebookError"></div>
+	
+		<p>
+			<a class="shareFacebook" href="#" 
+				data-description="this is the description"
+				data-image="http://www.sumocoders.be//apple-touch-icon.png"
+				data-link="http://www.sumocoders.be"
+				data-title="SumoCoders"
+			>
+				Share
+			</a>
+		</p>
+	</div>
+	
+	<div id="fb-root"></div>
+	<script src="http://connect.facebook.net/en_US/all.js"></script>
+	<script>
+		FB.init({ appId: '<your app id>', status: true, cookie: true, xfbml: true });
+	</script>
+</body>
+</html>
