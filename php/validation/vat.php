@@ -12,13 +12,10 @@ function sanitizeVatNumber($number) {
  * Check if the input is a VAT number (sanitize first)
  */
 function isVatNumber($number) {
-    if (
-        !SpoonFilter::isAlphabetical(substr($number, 0, 2))
-        || !SpoonFilter::isNumeric(substr($number, 2))
-        || strlen($values['institution_vat']) < 11
-        || strlen($values['institution_vat']) > 13
-    ) {
-        return false;
-    }
-    return true;
+    return (
+        SpoonFilter::isAlphabetical(substr($number, 0, 2))
+        && SpoonFilter::isNumeric(substr($number, 2))
+        && strlen($number) >= 11
+        && strlen($number) <= 12
+    );
 }

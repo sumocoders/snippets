@@ -32,23 +32,23 @@ function isIban($iban) {
         's' => 28, 't' => 29, 'u' => 30, 'v' => 31, 'w' => 32, 'x' => 33, 'y' => 34, 'z' => 35
     );
 
-    if (strlen($iban) == $countries[substr($iban, 0, 2)]) {
+    if (isset($countries[substr($iban, 0, 2)])
+        && strlen($iban) == $countries[substr($iban, 0, 2)]
+    ) {
         $movedChar = substr($iban, 4) . substr($iban, 0, 4);
         $movedCharArray = str_split($movedChar);
         $newString = '';
 
         foreach ($movedCharArray as $key => $value) {
-            if (!is_numeric($movedCharArray[$key])) {
+            if (!is_numeric($movedCharArray[$key])
+                && isset($chars[$movedCharArray[$key]])
+            ) {
                 $movedCharArray[$key] = $chars[$movedCharArray[$key]];
             }
             $newString .= $movedCharArray[$key];
         }
 
-        if (bcmod($newString, '97') == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return (bcmod($newString, '97') == 1);
     } else {
         return false;
     }
