@@ -4,8 +4,7 @@
  * Filter the input to a valid VAT number (remove spaces, dots, hyphens and slashes)
  */
 function sanitizeVatNumber($number) {
-    $sanitized = str_replace(array(' ', '/', '.', '-'), '', $number);
-    $number = strtoupper($number);
+    $sanitized = strtoupper(str_replace(array(' ', '/', '.', '-'), '', $number));
     return $sanitized;
 }
 
