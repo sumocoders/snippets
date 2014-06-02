@@ -1,4 +1,4 @@
-## Snippet to distribute heights on a couple of elements
+## Snippet to distribute heights on items per row on multiple rows
 
 highest = 0
 arrayHeights = []
