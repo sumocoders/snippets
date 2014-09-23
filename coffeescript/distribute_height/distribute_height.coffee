@@ -18,5 +18,5 @@ $wrap.each ->
     if height > maxHeight
       maxHeight = height
 
-    # set the height for all items
-    $items.height maxHeight
+  # set the height for all items
+  $items.height maxHeight
