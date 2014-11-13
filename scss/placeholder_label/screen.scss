@@ -1,0 +1,27 @@
+// Only to be used in Fork or in combination with form.js or form.coffee
+// When the form input is on focus or filled, the label will move above it
+// Can be altered so it moves to left, right, bottom too
+// Tweak left and top position so it's aligned correctly
+
+.wrap {
+  @include clearfix;
+  position: relative;
+  padding-top: 22px;
+}
+
+.form-control {
+  margin-bottom: 20px;
+}
+
+.control-label {
+  position: absolute;
+  left: 13px;
+  top: 26px;
+  z-index: 999;
+  @include transition(top 150ms);
+}
+
+.form-control:focus + .control-label,
+.form-control.filled + .control-label {
+  top: -4px;
+}
