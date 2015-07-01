@@ -9,6 +9,12 @@ repository=$1
 client=$2
 project=$3
 
+git ls-remote "$repository" &>-
+if [ "$?" -ne 0 ]; then
+  echo "Please create the repository first!"
+  exit 1;
+fi
+
 mkdir -p ~/Sites/$client/$project
 cd ~/Sites/$client/$project
 git clone git://github.com/sumocoders/forkcms.git .
