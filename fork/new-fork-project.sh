@@ -11,7 +11,7 @@ repository="git@git.sumocoders.be:sumocoders/$project"
 
 git ls-remote "$repository" &>-
 if [ "$?" -ne 0 ]; then
-  echo "Please create the repository first!"
+  echo "Please create a repository named $project on Gitlab first!"
   exit 1;
 fi
 
