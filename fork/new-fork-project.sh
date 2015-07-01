@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [[ $# -ne 3 ]] ; then
-  echo 'Usage: ./new-fork-project.sh <git-repo> <client> <project>'
-  exit 1
+if [[ $# -ne 2 ]] ; then
+  echo 'Usage: ./new-fork-project.sh <client> <project>'
+  exit 1;
 fi
 
-repository=$1
-client=$2
-project=$3
+client=$1
+project=$2
+repository="git@git.sumocoders.be:sumocoders/$project"
 
 git ls-remote "$repository" &>-
 if [ "$?" -ne 0 ]; then
