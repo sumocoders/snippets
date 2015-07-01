@@ -31,7 +31,7 @@ sed -i -e 's|set :repository, ""|set :repository, "'$repository'"|g' Capfile
 sed -i -e 's|site.path_www:          </home/sites/<client>/<project>path>|site.path_www:          /home/sites/'$client'/'$project'|g' app/config/parameters_install.yml
 
 git add .
-git commit -m 'Added basic project info to be able to deploy'
+git commit -m 'Add basic project info to be able to deploy'
 git push
 
 bundle install
