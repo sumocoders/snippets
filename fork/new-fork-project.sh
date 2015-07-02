@@ -26,7 +26,7 @@ git remote add origin $repository
 git push --set-upstream origin master
 git checkout -b staging
 git push --set-upstream origin staging
-echo -e "You will now be taken to Gitlab. Please set the default branch to 'staging'. Press enter when you're done."
+echo -e "You will now be taken to Gitlab. Please set the default branch to 'staging'. Press return when you're done."
 open http://git.sumocoders.be/sumocoders/$project/edit
 read input_variable
 
@@ -56,11 +56,11 @@ pass=$(cap sumodev:db:info 2>&1 | grep pass -A 3 | tail -n 1 | sed -e 's/ \*\* \
 echo "Database: $database"
 echo "User: $user"
 echo "Password: $pass"
-echo -e "Please press enter when the installation has successfully completed. If you have problems with the installer, enter 'sumo box ssh' and do composer install in the project folder"
+echo -e "Please press return when the installation has successfully completed. If you have problems with the installer, enter 'sumo box ssh' and do composer install in the project folder"
 read input_variable
 
 open http://$project.$client.dev/private
-echo -e "Now import the locale.xml from the theme folder to the translations. Press enter when you're done"
+echo -e "Now import the locale.xml from the theme folder to the translations. Press return when you're done"
 read input_variable
 
 cp app/config/parameters.yml app/config/parameters.dev.yml
