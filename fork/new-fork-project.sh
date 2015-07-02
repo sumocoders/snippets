@@ -30,11 +30,11 @@ echo -e "You will now be taken to Gitlab. Please set the default branch to 'stag
 open http://git.sumocoders.be/sumocoders/$project/edit
 read input_variable
 
-sed -i -e 's/set :client,  ""/set :client, "'$client'"/g' Capfile
-sed -i -e 's/set :project, ""/set :project, "'$project'"/g' Capfile
-sed -i -e 's|set :repository, ""|set :repository, "'$repository'"|g' Capfile
+sed -i '' -e 's/set :client.*/set :client, "'$client'"/g' Capfile
+sed -i '' -e 's/set :project.*/set :project, "'$project'"/g' Capfile
+sed -i '' -e 's|set :repository.*|set :repository, "'$repository'"|g' Capfile
 
-sed -i -e 's|site.path_www:          </home/sites/<client>/<project>path>|site.path_www:          /home/sites/'$client'/'$project'|g' app/config/parameters_install.yml
+sed -i '' -e 's|site.path_www:.*|site.path_www:          /home/sites/'$client'/'$project'|g' app/config/parameters_install.yml
 
 git add .
 git commit -m 'Add basic project info to be able to deploy'
