@@ -27,8 +27,8 @@ git push --set-upstream origin master
 git checkout -b staging
 git push --set-upstream origin staging
 echo -e "You will now be taken to Gitlab. Please set the default branch to 'staging'. Press enter when you're done."
-read input_variable
 open http://git.sumocoders.be/sumocoders/$project/edit
+read input_variable
 
 sed -i -e 's/set :client,  ""/set :client, "'$client'"/g' Capfile
 sed -i -e 's/set :project, ""/set :project, "'$project'"/g' Capfile
