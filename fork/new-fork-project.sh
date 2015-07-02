@@ -64,10 +64,10 @@ echo -e "Now import the locale.xml from the theme folder to the translations. Pr
 read input_variable
 
 cp app/config/parameters.yml app/config/parameters.dev.yml
-sed -i -e 's/database.host:          10.11.12.13/database.host:          localhost/g' app/config/parameters.dev.yml
-sed -i -e 's/database.user:          root/database.user:          '$user'/g' app/config/parameters.dev.yml
-sed -i -e 's/database.password:      root/database.password:      '$pass'/g' app/config/parameters.dev.yml
-sed -i -e 's/site.domain:            '$project'.'$client'.dev/site.domain:            '$project'.'$client'.sumocoders.eu/g' app/config/parameters.dev.yml
+sed -i '' -e 's/database.host:.*/database.host:          localhost/g' app/config/parameters.dev.yml
+sed -i '' -e 's/database.user:.*/database.user:          '$user'/g' app/config/parameters.dev.yml
+sed -i '' -e 's/database.password:.*/database.password:      '$pass'/g' app/config/parameters.dev.yml
+sed -i '' -e 's/site.domain:.*/site.domain:            '$project'.'$client'.sumocoders.eu/g' app/config/parameters.dev.yml
 
 cap deploy:setup deploy
 cap sumodev:db:put
