@@ -59,9 +59,7 @@ echo "Password: $pass"
 echo -e "Please press return when the installation has successfully completed. If you have problems with the installer, enter 'sumo box ssh' and do composer install in the project folder"
 read input_variable
 
-open http://$project.$client.dev/private/en/locale/import
-echo -e "Now import the locale.xml from the theme folder to the translations. Press return when you're done"
-read input_variable
+php tools/import_locale.php -f src/Frontend/Themes/Bootstrap/locale.xml
 
 cp app/config/parameters.yml app/config/parameters.dev.yml
 sed -i '' -e 's/database.host:.*/database.host:          localhost/g' app/config/parameters.dev.yml
