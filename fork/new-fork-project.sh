@@ -79,3 +79,15 @@ read input_variable
 
 rm app/config/parameters.dev.yml
 cap sumodev:db:lock
+
+cp -r src/Frontend/Themes/Bootstrap src/Frontend/Themes/Custom
+sed -i '' -e 's|.*<name>bootstrap</name>.*|  <name>custom</name>|g' src/Frontend/Themes/Custom/info.xml
+sed -i '' -e 's/set :theme.*/set :theme, "Custom"/g' Capfile
+sed -i '' -e 's/.*"theme":.*/  "theme": "Custom",/g' package.json
+
+git add .
+git commit -m 'Duplicate Bootstrap theme'
+git push
+
+grunt build
+cap deploy
