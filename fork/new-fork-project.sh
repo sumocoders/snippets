@@ -21,7 +21,7 @@ git clone git://github.com/sumocoders/forkcms.git .
 rm -rf .git
 git init
 git add .
-git commit -m 'initial commit'
+git commit -n -m 'initial commit'
 git remote add origin $repository
 git push --set-upstream origin master
 git checkout -b staging
@@ -37,7 +37,7 @@ sed -i '' -e 's|set :repository.*|set :repository, "'$repository'"|g' Capfile
 sed -i '' -e 's|site.path_www:.*|site.path_www:          /home/sites/'$client'/'$project'|g' app/config/parameters_install.yml
 
 git add .
-git commit -m 'Add basic project info to be able to deploy'
+git commit -n -m 'Add basic project info to be able to deploy'
 git push
 
 bundle install
