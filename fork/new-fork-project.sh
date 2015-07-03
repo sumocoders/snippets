@@ -91,3 +91,12 @@ git push
 
 grunt build
 cap deploy
+
+open http://$project.$client.sumocoders.eu/private/nl/extensions/themes
+echo -e "The custom theme has been uploaded. Log in to the backend and install the new custom theme. Press return when you're done."
+read input_variable
+
+cap sumodev:db:get
+
+echo -e "All done!"
+
