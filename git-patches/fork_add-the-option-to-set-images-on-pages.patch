@@ -1,0 +1,193 @@
+From 724f404eed9cc50b4f1eb99e46b8737af563229d Mon Sep 17 00:00:00 2001
+From: Jelmer Prins <jelmer@sumocoders.be>
+Date: Tue, 5 May 2015 15:58:57 +0200
+Subject: [PATCH] add the option to set images on pages
+
+---
+ migrations/page-background/update.sql              |  1 +
+ .../Core/Layout/Css/imports/core_modules.css       |  4 ++++
+ src/Backend/Modules/Pages/Actions/Add.php          | 14 +++++++++++++
+ src/Backend/Modules/Pages/Actions/Edit.php         | 24 ++++++++++++++++++++++
+ src/Backend/Modules/Pages/Layout/Templates/Add.tpl |  7 +++++++
+ .../Modules/Pages/Layout/Templates/Edit.tpl        | 12 ++++++++++-
+ src/Frontend/Core/Engine/Model.php                 |  2 +-
+ src/Frontend/Files/backgrounds/source/.gitignore   |  2 ++
+ 8 files changed, 64 insertions(+), 2 deletions(-)
+ create mode 100644 migrations/page-background/update.sql
+ create mode 100644 src/Frontend/Files/backgrounds/source/.gitignore
+
+diff --git a/migrations/page-background/update.sql b/migrations/page-background/update.sql
+new file mode 100644
+index 0000000..5f3b21d
+--- /dev/null
++++ b/migrations/page-background/update.sql
+@@ -0,0 +1 @@
++ALTER TABLE pages ADD background VARCHAR(255) NULL;
+diff --git a/src/Backend/Core/Layout/Css/imports/core_modules.css b/src/Backend/Core/Layout/Css/imports/core_modules.css
+index f469818..560aeb3 100644
+--- a/src/Backend/Core/Layout/Css/imports/core_modules.css
++++ b/src/Backend/Core/Layout/Css/imports/core_modules.css
+@@ -107,6 +107,10 @@
+ 		margin: 6px 6px 12px 6px;
+ 	}
+ 
++	img.preview {
++		max-width: 100%;
++	}
++
+ /*
+ 	General
+ */
+diff --git a/src/Backend/Modules/Pages/Actions/Add.php b/src/Backend/Modules/Pages/Actions/Add.php
+index 4ebab11..ced7c11 100644
+--- a/src/Backend/Modules/Pages/Actions/Add.php
++++ b/src/Backend/Modules/Pages/Actions/Add.php
+@@ -276,6 +276,9 @@ class Add extends BackendBaseActionAdd
+         // extra
+         $this->frm->addDropdown('extra_type', BackendPagesModel::getTypes());
+ 
++        /** @remark custom for project, set background for page */
++        // add background image
++        $this->frm->addImage('background');
+         // meta
+         $this->meta = new BackendMeta($this->frm, null, 'title', true);
+ 
+@@ -319,6 +322,10 @@ class Add extends BackendBaseActionAdd
+     {
+         // is the form submitted?
+         if ($this->frm->isSubmitted()) {
++            /** @remark custom for project, set background for page */
++            // fields
++            $fileBackground = $this->frm->getField('background');
++
+             // get the status
+             $status = \SpoonFilter::getPostValue('status', array('active', 'draft'), 'active');
+ 
+@@ -414,6 +421,13 @@ class Add extends BackendBaseActionAdd
+                     )) ? 'Y' : 'N';
+                 }
+ 
++                /** @remark custom for project, set background for page */
++                // background image
++                $backgroundPath = FRONTEND_FILES_PATH . '/backgrounds';
++                $filenameBackground = $this->meta->getURL() . '_' . time() . '.' . $fileBackground->getExtension();
++                $fileBackground->generateThumbnails($backgroundPath, $filenameBackground);
++                $page['background'] = $filenameBackground;
++
+                 // set navigation title
+                 if ($page['navigation_title'] == '') {
+                     $page['navigation_title'] = $page['title'];
+diff --git a/src/Backend/Modules/Pages/Actions/Edit.php b/src/Backend/Modules/Pages/Actions/Edit.php
+index 6c4fba1..6e14478 100644
+--- a/src/Backend/Modules/Pages/Actions/Edit.php
++++ b/src/Backend/Modules/Pages/Actions/Edit.php
+@@ -438,6 +438,11 @@ class Edit extends BackendBaseActionEdit
+             'getURL',
+             array($this->record['id'], $this->record['parent_id'], $isAction)
+         );
++
++        /** @remark custom for project, set background for page */
++        // add background image
++        $this->frm->addImage('background');
++        $this->frm->addCheckbox('RemoveImage');
+     }
+ 
+     /**
+@@ -564,6 +569,11 @@ class Edit extends BackendBaseActionEdit
+     {
+         // is the form submitted?
+         if ($this->frm->isSubmitted()) {
++            /** @remark custom for project, set background for page */
++
++            /** @var BackendFormImage $fileBackground */
++            $fileBackground = $this->frm->getField('background');
++
+             // get the status
+             $status = \SpoonFilter::getPostValue('status', array('active', 'draft'), 'active');
+ 
+@@ -658,6 +668,20 @@ class Edit extends BackendBaseActionEdit
+                     )) ? 'Y' : 'N';
+                 }
+ 
++                /** @remark custom for project, set background for page */
++                // background image
++                $filenameBackground = $this->record['background'];
++                if ($fileBackground->isFilled() || $this->frm->getField('RemoveImage')->isChecked()) {
++                    $backgroundPath = FRONTEND_FILES_PATH . '/backgrounds';
++                    BackendModel::deleteThumbnails($backgroundPath, $filenameBackground);
++                    $filenameBackground = null;
++                }
++                if ($fileBackground->isFilled()) {
++                    $filenameBackground = $this->meta->getURL() . '_' . time() . '.' . $fileBackground->getExtension();
++                    $fileBackground->generateThumbnails($backgroundPath, $filenameBackground);
++                }
++                $page['background'] = $filenameBackground;
++
+                 // set navigation title
+                 if ($page['navigation_title'] == '') {
+                     $page['navigation_title'] = $page['title'];
+diff --git a/src/Backend/Modules/Pages/Layout/Templates/Add.tpl b/src/Backend/Modules/Pages/Layout/Templates/Add.tpl
+index 5ac65d6..48e6258 100644
+--- a/src/Backend/Modules/Pages/Layout/Templates/Add.tpl
++++ b/src/Backend/Modules/Pages/Layout/Templates/Add.tpl
+@@ -46,6 +46,13 @@
+ 
+ 				{option:formErrors}<span class="formError">{$formErrors}</span>{/option:formErrors}
+ 
++				<div id="backgroundImage">
++					<p>
++						<label for="background">{$lblBackground|ucfirst}</label>
++						{$fileBackground} {$fileBackgroundError}
++					</p>
++				</div>
++
+ 				<div id="templateVisualFallback" style="display: none">
+ 					<div id="fallback" class="generalMessage singleMessage infoMessage">
+ 						<div id="fallbackInfo">
+diff --git a/src/Backend/Modules/Pages/Layout/Templates/Edit.tpl b/src/Backend/Modules/Pages/Layout/Templates/Edit.tpl
+index 317cbea..cd09631 100644
+--- a/src/Backend/Modules/Pages/Layout/Templates/Edit.tpl
++++ b/src/Backend/Modules/Pages/Layout/Templates/Edit.tpl
+@@ -59,7 +59,17 @@
+ 				</div>
+ 
+ 				{option:formErrors}<span class="formError">{$formErrors}</span>{/option:formErrors}
+-
++				<div id="backgroundImage">
++					<p>
++						<label for="background">{$lblBackground|ucfirst}</label>
++						{$fileBackground} {$fileBackgroundError}
++						{option:item.background}
++              <label for="removeImage">{$chkRemoveImage} {$lblDelete|ucfirst}</label>
++              {$chkRemoveImageError}
++              <img src="{$FRONTEND_FILES_URL}/backgrounds/source/{$item.background}" alt="Background" class="preview" />
++						{/option:item.background}
++					</p>
++				</div>
+ 				<div id="templateVisualFallback" style="display: none">
+ 					<div id="fallback" class="generalMessage singleMessage infoMessage">
+ 						<div id="fallbackInfo">
+diff --git a/src/Frontend/Core/Engine/Model.php b/src/Frontend/Core/Engine/Model.php
+index 97b16d3..ae4c47e 100644
+--- a/src/Frontend/Core/Engine/Model.php
++++ b/src/Frontend/Core/Engine/Model.php
+@@ -413,7 +413,7 @@ class Model extends \BaseModel
+                  m.custom AS meta_custom,
+                  m.url, m.url_overwrite,
+                  m.data AS meta_data,
+-                 t.path AS template_path, t.data AS template_data
++                 t.path AS template_path, t.data AS template_data, p.background
+              FROM pages AS p
+              INNER JOIN meta AS m ON p.meta_id = m.id
+              INNER JOIN themes_templates AS t ON p.template_id = t.id
+diff --git a/src/Frontend/Files/backgrounds/source/.gitignore b/src/Frontend/Files/backgrounds/source/.gitignore
+new file mode 100644
+index 0000000..d6b7ef3
+--- /dev/null
++++ b/src/Frontend/Files/backgrounds/source/.gitignore
+@@ -0,0 +1,2 @@
++*
++!.gitignore
+-- 
+2.2.0
+
