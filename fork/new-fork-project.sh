@@ -1,17 +1,24 @@
 #!/bin/bash
 
-if [[ $# -ne 2 ]] ; then
-  echo 'Usage: ./new-fork-project.sh <client> <project>'
+if [[ $# -ne 2 ]] && [[ $# -ne 3 ]] ; then
+  echo 'Usage: ./new-fork-project.sh <client> <project> <git repository name> (optional)'
   exit 1;
 fi
 
 client=$1
 project=$2
-repository="git@git.sumocoders.be:sumocoders/$project"
+
+if [[ $# -eq 3 ]] ; then
+  reponame=$3
+else
+  reponame=$client-$project
+fi
+
+repository="git@git.sumocoders.be:sumocoders/$reponame"
 
 git ls-remote "$repository" &>-
 if [ "$?" -ne 0 ]; then
-  echo "Please create a repository named $project on Gitlab first!"
+  echo "Please create a repository named $reponame on Gitlab first!"
   exit 1;
 fi
 
@@ -27,7 +34,7 @@ git push --set-upstream origin master
 git checkout -b staging
 git push --set-upstream origin staging
 echo -e "You will now be taken to Gitlab. Please set the default branch to 'staging'. Press return when you're done."
-open http://git.sumocoders.be/sumocoders/$project/edit
+open http://git.sumocoders.be/sumocoders/$reponame/edit
 read input_variable
 
 sed -i '' -e 's/set :client.*/set :client, "'$client'"/g' Capfile
