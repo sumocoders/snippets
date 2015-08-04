@@ -38,9 +38,11 @@ sed -i '' -e 's|site.path_www:.*|site.path_www:          /home/sites/'$client'/'
 
 git add .
 git commit -n -m 'Add basic project info to be able to deploy'
-git push
 
 bundle install
+git add Gemfile.lock
+git commit -n -m 'Add Gemfile.lock'
+git push
 cap sumodev:db:create
 cap sumodev:db:get
 
@@ -56,7 +58,7 @@ pass=$(cap sumodev:db:info 2>&1 | grep pass -A 3 | tail -n 1 | sed -e 's/ \*\* \
 echo "Database: $database"
 echo "User: $user"
 echo "Password: $pass"
-echo -e "Please press return when the installation has successfully completed. If you have problems with the installer, enter 'sumo box ssh' and do composer install in the project folder"
+echo -e "Please press return when the installation has successfully completed. If you have problems with the installer, enter 'sumo box ssh' and do composer install in the project folder."
 read input_variable
 
 php tools/install_locale.php -f src/Frontend/Themes/Bootstrap/locale.xml
@@ -72,7 +74,7 @@ cap sumodev:db:put
 scp app/config/parameters.dev.yml sites@dev.sumocoders.eu:~/apps/$client/$project/shared/config/parameters.yml
 
 open http://$project.$client.sumocoders.eu/
-echo -e "Please check whether the site is working correctly on staging."
+echo -e "Please check whether the site is working correctly on staging and press return."
 read input_variable
 
 rm app/config/parameters.dev.yml
@@ -84,7 +86,7 @@ sed -i '' -e 's/set :theme.*/set :theme, "Custom"/g' Capfile
 sed -i '' -e 's/.*"theme":.*/  "theme": "Custom",/g' package.json
 
 git add .
-git commit -m 'Duplicate Bootstrap theme'
+git commit -n -m 'Duplicate Bootstrap theme'
 git push
 
 grunt build
@@ -97,4 +99,3 @@ read input_variable
 cap sumodev:db:get
 
 echo -e "All done!"
-
