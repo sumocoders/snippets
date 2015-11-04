@@ -54,7 +54,12 @@ cap sumodev:db:create
 cap sumodev:db:get
 
 composer install
+
 npm install
+npm shrinkwrap --dev
+git add npm-shrinkwrap.json
+git commit -n -m 'Lock down npm dependency versions'
+
 grunt build
 
 echo -e "The Fork installer will now be opened. The database settings will be printed below."
