@@ -42,6 +42,7 @@ sed -i '' -e 's/set :project.*/set :project, "'$project'"/g' Capfile
 sed -i '' -e 's|set :repository.*|set :repository, "'$repository'"|g' Capfile
 
 sed -i '' -e 's|site.path_www:.*|site.path_www:          /home/sites/'$client'/'$project'|g' app/config/parameters_install.yml
+sed -i '' -e 's/site.default_title:.*/site.default_title:     '$project'/g' app/config/parameters_install.yml
 
 git add .
 git commit -n -m 'Add basic project info to be able to deploy'
