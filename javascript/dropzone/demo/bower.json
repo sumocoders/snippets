@@ -1,0 +1,19 @@
+{
+  "name": "dropzone",
+  "homepage": "https://github.com/sumocoders/snippets",
+  "authors": [
+    "Mathias Helin <mathias@sumocoders.be>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
