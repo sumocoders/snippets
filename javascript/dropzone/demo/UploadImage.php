@@ -12,23 +12,23 @@ class UploadImage extends AjaxAction
 {
     public function execute()
     {
-        $files = $_FILES['file'];
-        $return = array();
-        // Use a foreach because an upload can contain multiple files
-        foreach($files['name'] as $index => $file) {
-            $filename = md5($files['name'][$index] . time()) . '.jpeg';
-            if(move_uploaded_file($files['tmp_name'][$index], FRONTEND_FILES_PATH . '/Trips/Days/Images/source/' . $filename)) {
-                FrontendModel::generateThumbnails(
-                    FRONTEND_FILES_PATH . '/Blog/Days/Images/',
-                    FRONTEND_FILES_PATH . '/Blog/Days/Images/source/' . $filename
+        $files = array_map(
+            function ($file) {
+                $filename = md5(uniqid() . time()) . '.' . $file->getClientOriginalExtension();
+                $file->move(
+                    FRONTEND_FILES_PATH . '/Profiles/acquisitions/source',
+                    $filename
                 );
-            }
-            // Optional: delete source if you're handling big files
-            \SpoonFile::delete(FRONTEND_FILES_PATH . '/Trips/Days/Images/source/' . $filename);
-            $return[$index] = $filename;
-        }
+                Model::generateThumbnails(
+                    FRONTEND_FILES_PATH . '/Profiles/acquisitions/',
+                    FRONTEND_FILES_PATH . '/Profiles/acquisitions/source/' . $filename
+                );
 
-        // return the new filenames
-        $this->output(200, $return);
+                return $filename;
+            },
+            $this->get('request')->files->all()
+        );
+
+        $this->output(self::OK, $files);
     }
 }
