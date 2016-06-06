@@ -38,7 +38,7 @@
         console.log(image);
         var realfile = {name: image.name, size: image.filesize, accepted: true};
         dropzone.emit('addedfile', realfile);
-        dropzone.emit('thumbnail', image.url);
+        dropzone.emit('thumbnail', realfile, image.url);
         dropzone.emit('complete', realfile);
         // push this to the list so dropzone knows how many images are already uploaded
         dropzone.files.push(realfile);
